@@ -21,14 +21,13 @@ public class PrintUsersTasklet implements Tasklet {
     private final DataSource dataSource;
 
     @Override
-    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        List<UserEntity> users = jdbcTemplate.query(
-                "SELECT * FROM users",
-                new BeanPropertyRowMapper<>(UserEntity.class)
-        );
+    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) {
+        System.out.println("Mostrando información de usuarios");
+        List<UserEntity> usuarios = (List<UserEntity>) chunkContext.getStepContext().getJobExecutionContext().get("users");
 
-        users.forEach(System.out::println); // Imprime cada usuario en consola
+        usuarios.forEach(user -> System.out.println(user.toString()));
+
+        System.out.println("Fin de la información de usuarios");
 
         return RepeatStatus.FINISHED;
     }

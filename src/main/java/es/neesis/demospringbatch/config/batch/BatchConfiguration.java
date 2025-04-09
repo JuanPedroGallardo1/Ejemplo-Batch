@@ -57,10 +57,25 @@ public class BatchConfiguration {
         return new JdbcCursorItemReaderBuilder<User>()
                 .name("readerBDD")
                 .dataSource(dataSource)
-                .sql("SELECT id, username, password, email, (name + surname), creadoEn FROM users ")
-                .rowMapper(new BeanPropertyRowMapper<>(User.class))
+                .sql("SELECT id, username, password, email, fullname, creadoEn FROM users")
+                .rowMapper((rs, rowNum) -> {
+                    User user = new User();
+                    user.setId(rs.getString("id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setPassword(rs.getString("password"));
+                    user.setEmail(rs.getString("email"));
+
+                    String fullName = rs.getString("fullname");
+                    if (fullName != null && !fullName.isBlank()) {
+                        String[] parts = fullName.trim().split("\\s+", 3);
+                        user.setName(parts.length > 0 ? parts[0] : "");
+                        user.setSurname(parts.length > 1 ? parts[1] : "");
+                    }
+                    return user;
+                })
                 .build();
     }
+
 
     @Bean
     public UserProcessor processor() {
