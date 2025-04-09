@@ -99,13 +99,14 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Job importUserJob(UserExecutionListener listener, Step step1, Step step2, Step step3, Step step4) {
+    public Job importUserJob(UserExecutionListener listener, Step step1, Step step2, Step step3, Step step4, Step step5) {
         return jobBuilderFactory.get("importUserJob")
                 .listener(listener)
                 .start(step1)
                 .next(step2)
                 .next(step3)
                 .next(step4)
+                .next(step5)
                 .build();
     }
 
@@ -142,6 +143,11 @@ public class BatchConfiguration {
         return stepBuilderFactory.get("step4")
                 .tasklet(printUsersTasklet)
                 .build();
+    }
+
+    @Bean
+    public Step step5() {
+        return null;
     }
 
 }
